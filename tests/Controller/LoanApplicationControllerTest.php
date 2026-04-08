@@ -107,6 +107,103 @@ class LoanApplicationControllerTest extends TestCase
         $this->assertStringContainsString('repayment frequency: invalid enumeration', $response->getContent());
     }
 
+    public function testCreateInvalidPrincipal(): void
+    {
+        $payload = [
+            'term' => 12,
+            'principal' => 'invalid',
+            'repayment_frequency' => 'monthly',
+            'rate' => 5.5,
+            'currency' => 'USD',
+            'consent_to_email' => true
+        ];
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('principal: not float', $response->getContent());
+    }
+
+    public function testCreateInvalidFrequencyType(): void
+    {
+        $payload = [
+            'term' => 12,
+            'principal' => 5000.0,
+            'repayment_frequency' => 123,
+            'rate' => 5.5,
+            'currency' => 'USD',
+            'consent_to_email' => true
+        ];
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('repayment frequency: not string', $response->getContent());
+    }
+
+    public function testCreateInvalidRate(): void
+    {
+        $payload = [
+            'term' => 12,
+            'principal' => 5000.0,
+            'repayment_frequency' => 'monthly',
+            'rate' => 'high',
+            'currency' => 'USD',
+            'consent_to_email' => true
+        ];
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('rate: not float', $response->getContent());
+    }
+
+    public function testCreateInvalidCurrency(): void
+    {
+        $payload = [
+            'term' => 12,
+            'principal' => 5000.0,
+            'repayment_frequency' => 'monthly',
+            'rate' => 5.5,
+            'currency' => 'US', // Too short
+            'consent_to_email' => true
+        ];
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('repayment frequency: not currency code', $response->getContent());
+    }
+
+    public function testCreateInvalidCurrencyType(): void
+    {
+        $payload = [
+            'term' => 12,
+            'principal' => 5000.0,
+            'repayment_frequency' => 'monthly',
+            'rate' => 5.5,
+            'currency' => 123,
+            'consent_to_email' => true
+        ];
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('repayment frequency: not currency code', $response->getContent());
+    }
+
+    public function testCreateInvalidConsentType(): void
+    {
+        $payload = [
+            'term' => 12,
+            'principal' => 5000.0,
+            'repayment_frequency' => 'monthly',
+            'rate' => 5.5,
+            'currency' => 'USD',
+            'consent_to_email' => 'yes'
+        ];
+        $request = new Request([], [], [], [], [], [], json_encode($payload));
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('consent to email: not boolean', $response->getContent());
+    }
+
+    public function testCreateInvalidJsonBody(): void
+    {
+        $request = new Request([], [], [], [], [], [], 'not a json');
+        $response = $this->controller->create($request, $this->mailer, $this->entityManager);
+        $this->assertStringContainsString('Invalid JSON', $response->getContent());
+    }
+
     /**
      * Test that email is NOT sent when consent is false
      */

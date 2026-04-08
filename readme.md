@@ -19,12 +19,17 @@ You have 90 minutes to implement a feature on some 5-year-old code, introduce fo
 Make some partial improvements and future tickets for improvements.
 
 
-### Commands
+### Setup
 
-`CREATE DB`.
+`docker compose up -d`
 
+`docker compose exec php touch var/batch/loanApplication.txt`
+`docker compose exec database psql -U app -c 'CREATE DATABASE app_test`
 `docker compose exec php bin/console d:m:migrate --env=test`
 
-`docker compose exec php vendor/bin/phpunit -c phpunit.xml`
+
+### Useful Commands
+
+`docker compose exec php vendor/bin/phpunit -c phpunit.xml tests`
 
 

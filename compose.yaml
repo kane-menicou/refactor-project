@@ -21,16 +21,8 @@ services:
     ports:
       # HTTP
       - target: 80
-        published: 8086
+        published: 8087
         protocol: tcp
-      # HTTPS
-      - target: 443
-        published: 4339
-        protocol: tcp
-      # HTTP/3
-      - target: 443
-        published: 4339
-        protocol: udp
 
 ###> doctrine/doctrine-bundle ###
   database:

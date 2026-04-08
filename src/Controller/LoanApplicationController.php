@@ -16,6 +16,7 @@ use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use function array_merge;
 use function file_put_contents;
+use function fopen;
 use function is_array;
 use function is_bool;
 use function is_float;
@@ -25,6 +26,7 @@ use function json_decode;
 use function json_encode;
 use function serialize;
 use function strlen;
+use const FILE_APPEND;
 
 class LoanApplicationController extends AbstractController
 {
@@ -81,7 +83,7 @@ class LoanApplicationController extends AbstractController
 
             $response = array_merge($body, $calculations);
 
-            file_put_contents(__DIR__ . '/../../var/batch/loanApplication' . $la->getId() . '.json', serialize($response));
+            file_put_contents(__DIR__ . '/../../var/batch/loanApplication.txt', serialize($response), FILE_APPEND);
 
             if ($consentToEmail) {
                 $email = (new Email())
