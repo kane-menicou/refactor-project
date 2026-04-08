@@ -30,6 +30,6 @@ Make some partial improvements and future tickets for improvements.
 
 ### Useful Commands
 
-`docker compose exec php vendor/bin/phpunit -c phpunit.xml tests`
+`docker compose exec php vendor/bin/phpunit -c phpunit.xml.dist tests`
 
 
